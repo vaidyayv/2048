@@ -21,7 +21,7 @@ const Matrix: React.FC<MatrixProps> = (props) => {
                                             <Button sx={{width:'100%', height: '100%', opacity:`${OpacityPallete[data]}`}} variant="contained" 
                                             color={ColorPalette[`${data}`]}
                                             disableElevation >
-                                                <p>{data}</p>
+                                                <p style={{fontSize: 'large'}}>{data}</p>
                                             </Button >
                                         </div >
                                     )
