@@ -11,6 +11,7 @@ const initialMatrix: Array<Array<number>> = [
 ]
 
 function App() {
+  // eslint-disable-next-line
   const [matrixData, setMatrixData] = useState<Array<Array<number>>>(initialMatrix);
   const componentRef = useRef(null)
   let { width } = useResize(componentRef);
