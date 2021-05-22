@@ -1,25 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useRef, useState } from 'react';
+import Container from '@material-ui/core/Container';
+import Matrix from './components/matrix';
+import useResize from './hooks/useResize';
+
+const initialMatrix: Array<Array<number>> = [
+  [2, 4, 8, 16],
+  [32, 64, 128, 256],
+  [512, 1024, 2048, 4096],
+  [8192, 16384, 32768, 0]
+]
 
 function App() {
+  const [matrixData, setMatrixData] = useState<Array<Array<number>>>(initialMatrix);
+  const componentRef = useRef(null)
+  let { width } = useResize(componentRef);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          2048 game
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container sx={{ height: '100vh', background: '#fbf8ef' }} maxWidth="sm">
+      <div ref={componentRef} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+        <div style={{
+          display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly', alignItems: 'center', height: `${width}px`, width: `${width}px`
+        }} >
+          <Matrix matrixData={matrixData} />
+        </div>
+      </div>
+    </Container>
   );
 }
 
