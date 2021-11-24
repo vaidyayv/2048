@@ -30,10 +30,19 @@ function App() {
   const [touchEndY, setTouchEndY] = React.useState(0);
 
   useEffect(() => {
-    let matrixDataCopy: Array<Array<number>> = insertRandom(matrixData);
-    setMatrixData(insertRandom(matrixDataCopy));
+    let matrix: Array<Array<number>> = JSON.parse(localStorage.getItem('matrix') || '[]');
+    if (matrix.length === 0) {
+      let matrixDataCopy: Array<Array<number>> = insertRandom(matrixData);
+      setMatrixData(insertRandom(matrixDataCopy));
+    } else {      
+      setMatrixData(matrix);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    localStorage.setItem('matrix', JSON.stringify(matrixData));
+  },[matrixData]);
 
   function handleTouchStart(targetTouches: React.Touch) {
     setTouchStartX(targetTouches.clientX);
@@ -49,7 +58,7 @@ function App() {
     let horizontalOffset = Math.abs(touchStartX - touchEndX);
     let verticalOffset = Math.abs(touchStartY - touchEndY);
     if (horizontalOffset > verticalOffset) {
-      if (touchStartX - touchEndX > 150) {
+      if (touchStartX - touchEndX > 50) {
         // do your stuff here for left swipe
         let matrixDataCopy: Array<Array<number>> = leftSwipe(matrixData)
         if (isGameOver(matrixDataCopy)) {
@@ -59,7 +68,7 @@ function App() {
         }
       }
 
-      if (touchStartX - touchEndX < -150) {
+      if (touchStartX - touchEndX < -50) {
         // do your stuff here for right swipe
         let matrixDataCopy: Array<Array<number>> = rightSwipe(matrixData)
         if (isGameOver(matrixDataCopy)) {
@@ -69,17 +78,16 @@ function App() {
         }
       }
     } else {
-      if (touchStartY - touchEndY > 25) {
+      if (touchStartY - touchEndY > 50) {
         // do your stuff here for up swipe
         let matrixDataCopy: Array<Array<number>> = upSwipe(matrixData)
         if (isGameOver(matrixDataCopy)) {
         } else if (isArrayChanged(matrixDataCopy, matrixData)) {
           setMatrixData(insertRandom(matrixDataCopy));
         }
-        console.log("up swipe");
       }
 
-      if (touchStartY - touchEndY < -25) {
+      if (touchStartY - touchEndY < -50) {
         // do your stuff here for down swipe
         let matrixDataCopy: Array<Array<number>> = downSwipe(matrixData)
         if (isGameOver(matrixDataCopy)) {
