@@ -7,7 +7,6 @@ const downSwipe = (matrixData: Array<Array<number>>) => {
     arrayTranspose(matrixDataCopy);
     matrixDataCopy = rightSwipe(matrixDataCopy);
     arrayTranspose(matrixDataCopy);
-    console.log(matrixDataCopy)
     return matrixDataCopy;
 }
 
