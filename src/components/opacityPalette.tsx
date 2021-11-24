@@ -1,5 +1,5 @@
 export const OpacityPallete: any = {
-    0: '0.5',
+    0: '0.25',
     2: '0.5',
     4: '0.5',
     8: '0.5',
