@@ -9,6 +9,10 @@ import downSwipe from './logic/downSwipe';
 import isGameOver from './logic/isGameOver';
 import insertRandom from './logic/insertRandom';
 import isArrayChanged from './logic/isArrayChanged';
+import Restart from './components/restart';
+import Menu from './components/menu';
+import HighestScore from './components/highestScore';
+import GameOver from './components/gameOver';
 
 const initialMatrix: Array<Array<number>> = [
   [0, 0, 0, 0],
@@ -20,6 +24,15 @@ const initialMatrix: Array<Array<number>> = [
 function App() {
   // eslint-disable-next-line
   const [matrixData, setMatrixData] = useState<Array<Array<number>>>(initialMatrix);
+
+  const savedCurrentScore = +(localStorage.getItem('currentScore') || '0')
+  const [currentScore, setCurrentScore] = useState<number>(savedCurrentScore);
+
+  const savedHighestScore = +(localStorage.getItem('highestScore') || '0')
+  const [highestScore, setHighestScore] = useState<number>(savedHighestScore);
+
+  const [gameOver, setGameOver] = useState<boolean>(false);
+
   const componentRef = useRef(null)
   let { width } = useResize(componentRef);
 
@@ -34,19 +47,41 @@ function App() {
     if (matrix.length === 0) {
       let matrixDataCopy: Array<Array<number>> = insertRandom(matrixData);
       setMatrixData(insertRandom(matrixDataCopy));
-    } else {      
+    } else {
       setMatrixData(matrix);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   useEffect(() => {
+    setCurrentScore(matrixData.flat().reduce((el, total) => total += el, 0));
     localStorage.setItem('matrix', JSON.stringify(matrixData));
-  },[matrixData]);
+  }, [matrixData]);
+
+  useEffect(() => {
+    if (currentScore > highestScore) {
+      setHighestScore(currentScore);
+    }
+    localStorage.setItem('currentScore', '' + currentScore);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentScore]);
+
+  useEffect(() => {
+    localStorage.setItem('highestScore', '' + highestScore);
+  }, [highestScore]);
+
+  const restart = () => {
+    let matrixDataCopy: Array<Array<number>> = insertRandom(initialMatrix);
+    setCurrentScore(2);
+    setMatrixData(insertRandom(matrixDataCopy));
+    setGameOver(false);
+  }
 
   function handleTouchStart(targetTouches: React.Touch) {
     setTouchStartX(targetTouches.clientX);
     setTouchStartY(targetTouches.clientY);
+    setTouchEndX(targetTouches.clientX);
+    setTouchEndY(targetTouches.clientY);
   }
 
   function handleTouchMove(targetTouches: React.Touch) {
@@ -61,39 +96,57 @@ function App() {
       if (touchStartX - touchEndX > 50) {
         // do your stuff here for left swipe
         let matrixDataCopy: Array<Array<number>> = leftSwipe(matrixData)
-        if (isGameOver(matrixDataCopy)) {
-          window.alert("Game Over!");
-        } else if (isArrayChanged(matrixDataCopy, matrixData)) {
-          setMatrixData(insertRandom(matrixDataCopy));
+        if (isArrayChanged(matrixDataCopy, matrixData)) {
+          const matrixDataCopy2: Array<Array<number>> = insertRandom(matrixDataCopy)
+          setMatrixData(matrixDataCopy2);
+          if (isGameOver(matrixDataCopy2)) {
+            setGameOver(true);
+          }
+        } else if (isGameOver(matrixData)) {
+          setGameOver(true);
         }
       }
 
       if (touchStartX - touchEndX < -50) {
         // do your stuff here for right swipe
         let matrixDataCopy: Array<Array<number>> = rightSwipe(matrixData)
-        if (isGameOver(matrixDataCopy)) {
-          window.alert("Game Over!");
-        } else if (isArrayChanged(matrixDataCopy, matrixData)) {
-          setMatrixData(insertRandom(matrixDataCopy));
+        if (isArrayChanged(matrixDataCopy, matrixData)) {
+          const matrixDataCopy2: Array<Array<number>> = insertRandom(matrixDataCopy)
+          setMatrixData(matrixDataCopy2);
+          if (isGameOver(matrixDataCopy2)) {
+            setGameOver(true);
+          }
+        } else if (isGameOver(matrixData)) {
+          setGameOver(true);
         }
       }
     } else {
       if (touchStartY - touchEndY > 50) {
         // do your stuff here for up swipe
         let matrixDataCopy: Array<Array<number>> = upSwipe(matrixData)
-        if (isGameOver(matrixDataCopy)) {
-        } else if (isArrayChanged(matrixDataCopy, matrixData)) {
-          setMatrixData(insertRandom(matrixDataCopy));
+        if (isArrayChanged(matrixDataCopy, matrixData)) {
+          const matrixDataCopy2: Array<Array<number>> = insertRandom(matrixDataCopy)
+          setMatrixData(matrixDataCopy2);
+          if (isGameOver(matrixDataCopy2)) {
+            setGameOver(true);
+          }
+        } else if (isGameOver(matrixData)) {
+          setGameOver(true);
         }
+
       }
 
       if (touchStartY - touchEndY < -50) {
         // do your stuff here for down swipe
         let matrixDataCopy: Array<Array<number>> = downSwipe(matrixData)
-        if (isGameOver(matrixDataCopy)) {
-          window.alert("Game Over!");
-        } else if (isArrayChanged(matrixDataCopy, matrixData)) {
-          setMatrixData(insertRandom(matrixDataCopy));
+        if (isArrayChanged(matrixDataCopy, matrixData)) {
+          const matrixDataCopy2: Array<Array<number>> = insertRandom(matrixDataCopy)
+          setMatrixData(matrixDataCopy2);
+          if (isGameOver(matrixDataCopy2)) {
+            setGameOver(true);
+          }
+        } else if (isGameOver(matrixData)) {
+          setGameOver(true);
         }
       }
     }
@@ -101,18 +154,28 @@ function App() {
 
 
   return (
-    <Container sx={{ height: '100vh', background: '#fbf8ef' }} maxWidth="sm">
-      <div ref={componentRef} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+    <Container onTouchStart={e => handleTouchStart(e.targetTouches[0])}
+      onTouchMove={e => handleTouchMove(e.targetTouches[0])}
+      onTouchEnd={_ => handleTouchEnd()} sx={{ height: '100vh', background: '#fbf8ef', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingTop: '16px', paddingBottom: '16px' }} maxWidth="sm">
+      <div>
+        <Menu />
+        <HighestScore currentScore={currentScore} highestScore={highestScore} />
+      </div>
+      <div
+        ref={componentRef} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <div
-          onTouchStart={e => handleTouchStart(e.targetTouches[0])}
-          onTouchMove={e => handleTouchMove(e.targetTouches[0])}
-          onTouchEnd={_ => handleTouchEnd()}
           style={{
             display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly', alignItems: 'center', height: `${width}px`, width: `${width}px`
           }} >
           <Matrix matrixData={matrixData} />
         </div>
       </div>
+      <div style={{
+        height: '40px',
+      }}>
+        {gameOver && <GameOver />}
+      </div>
+      <Restart restart={restart} />
     </Container>
   );
 }
