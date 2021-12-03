@@ -10,9 +10,9 @@ import isGameOver from './logic/isGameOver';
 import insertRandom from './logic/insertRandom';
 import isArrayChanged from './logic/isArrayChanged';
 import Restart from './components/restart';
-import Menu from './components/menu';
 import HighestScore from './components/highestScore';
 import GameOver from './components/gameOver';
+import CurrentScore from './components/currentScore';
 
 const initialMatrix: Array<Array<number>> = [
   [0, 0, 0, 0],
@@ -158,8 +158,9 @@ function App() {
       onTouchMove={e => handleTouchMove(e.targetTouches[0])}
       onTouchEnd={_ => handleTouchEnd()} sx={{ height: '100vh', background: '#fbf8ef', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingTop: '16px', paddingBottom: '16px' }} maxWidth="sm">
       <div>
-        <Menu />
+        {/* <Menu /> */}
         <HighestScore currentScore={currentScore} highestScore={highestScore} />
+        <CurrentScore currentScore={currentScore} />
       </div>
       <div
         ref={componentRef} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

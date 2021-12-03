@@ -13,13 +13,13 @@ const HighestScore: React.FC<HighestScoreProps> = ({ currentScore, highestScore 
         }}>
             <div style={{
                 padding: '8px 24px 8px 24px',
-                border: '4px solid #e2e2e2',
+                border: '4px solid goldenrod',
                 borderRadius: '100px',
                 fontSize: '36px',
                 fontWeight: 'bold',
-                color: 'lightslategray',
+                color: 'goldenrod',
             }}>{highestScore}</div>
-            <div style={{ color: 'lightslategray' }}>HIGHEST SCORE</div>
+            <div style={{ color: 'goldenrod' }}>HIGHEST SCORE</div>
         </div >
     );
 }
